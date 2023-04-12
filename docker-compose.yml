@@ -19,4 +19,4 @@ services:
       PGADMIN_DEFAULT_EMAIL: pgadmin@pgadmin.com
       PGADMIN_DEFAULT_PASSWORD: pgadmin
     ports:
-      - "8081:80"
+      - "8090:80"
