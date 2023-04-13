@@ -1,5 +1,6 @@
 package com.microservico.pagamentos.dto;
 
+import com.microservico.pagamentos.model.ItemDoPedido;
 import com.microservico.pagamentos.model.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -45,4 +47,6 @@ public class PagamentoDto {
 
     @NotNull
     private Long formaPagamentoId;
+
+    private List<ItemDoPedido> itens;
 }

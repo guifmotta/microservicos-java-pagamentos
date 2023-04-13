@@ -34,7 +34,10 @@ public class PagamentoService {
     public PagamentoDto obterPorId(UUID id) {
         var pagamento = repository.findById(id).orElseThrow(EntityNotFoundException::new);
 
-        return modelMapper.map(pagamento, PagamentoDto.class);
+        var dto = modelMapper.map(pagamento, PagamentoDto.class);
+        dto.setItens(pedido.obterItensDoPedido(pagamento.getPedidoId()).getItens());
+
+        return dto;
     }
 
     public PagamentoDto criarPagamento(PagamentoDto dto) {
@@ -60,12 +63,24 @@ public class PagamentoService {
     public void confirmarPagamento(UUID id) {
         var pagamento = repository.findById(id);
 
-        if (!pagamento.isPresent()) {
+        if (pagamento.isEmpty()) {
             throw new EntityNotFoundException();
         }
 
         pagamento.get().setStatus(Status.CONFIRMADO);
         repository.save(pagamento.get());
         pedido.atualizaPagamento(pagamento.get().getPedidoId());
+    }
+
+    public void alteraStatus(UUID id) {
+        var pagamento = repository.findById(id);
+
+        if (pagamento.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+
+        pagamento.get().setStatus(Status.CONFIRMADO_SEM_INTEGRACAO);
+
+        repository.save(pagamento.get());
     }
 }

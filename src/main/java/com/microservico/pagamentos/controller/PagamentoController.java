@@ -2,6 +2,7 @@ package com.microservico.pagamentos.controller;
 
 import com.microservico.pagamentos.dto.PagamentoDto;
 import com.microservico.pagamentos.service.PagamentoService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,12 @@ public class PagamentoController {
     }
 
     @PatchMapping("/{id}/confirmar")
+    @CircuitBreaker(name = "atualizaPedido", fallbackMethod = "pagamentoAutorizadoSemIntegracao")
     public void confirmarPagamento(@PathVariable @NotNull UUID id) {
         service.confirmarPagamento(id);
+    }
+
+    public void pagamentoAutorizadoSemIntegracao(UUID id, Exception e) {
+        service.alteraStatus(id);
     }
 }
