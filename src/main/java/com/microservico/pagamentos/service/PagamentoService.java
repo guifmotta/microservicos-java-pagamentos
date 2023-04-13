@@ -1,6 +1,7 @@
 package com.microservico.pagamentos.service;
 
 import com.microservico.pagamentos.dto.PagamentoDto;
+import com.microservico.pagamentos.http.PedidoClient;
 import com.microservico.pagamentos.model.Pagamento;
 import com.microservico.pagamentos.model.Status;
 import com.microservico.pagamentos.repository.PagamentoRepository;
@@ -19,6 +20,9 @@ public class PagamentoService {
 
     @Autowired
     private PagamentoRepository repository;
+
+    @Autowired
+    private PedidoClient pedido;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -43,7 +47,7 @@ public class PagamentoService {
 
     public PagamentoDto atualizarPagamento(UUID id, PagamentoDto dto) {
         var pagamento = modelMapper.map(dto, Pagamento.class);
-        pagamento.setId(id); // TODO: Verificar se é necessário já que o Id deve estar vindo no DTO
+        pagamento.setId(id);
         pagamento = repository.save(pagamento);
 
         return modelMapper.map(pagamento, PagamentoDto.class);
@@ -51,5 +55,17 @@ public class PagamentoService {
 
     public void excluirPagamento(UUID id) {
         repository.deleteById(id);
+    }
+
+    public void confirmarPagamento(UUID id) {
+        var pagamento = repository.findById(id);
+
+        if (!pagamento.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        pagamento.get().setStatus(Status.CONFIRMADO);
+        repository.save(pagamento.get());
+        pedido.atualizaPagamento(pagamento.get().getPedidoId());
     }
 }

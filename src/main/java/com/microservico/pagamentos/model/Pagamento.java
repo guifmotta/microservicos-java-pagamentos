@@ -49,7 +49,7 @@ public class Pagamento {
     private Status status;
 
     @NotNull
-    private Long pedidoId;
+    private UUID pedidoId;
 
     @NotNull
     private Long formaPagamentoId;

@@ -8,6 +8,6 @@ CREATE TABLE pagamentos
     codigo character varying(3),
     status character varying(255) NOT NULL,
     forma_pagamento_id bigint NOT NULL,
-    pedido_id bigint NOT NULL,
+    pedido_id uuid NOT NULL,
     PRIMARY KEY (id)
 );
